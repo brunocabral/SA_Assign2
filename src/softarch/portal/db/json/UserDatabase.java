@@ -8,7 +8,7 @@ import softarch.portal.data.FreeSubscription;
 import softarch.portal.data.Operator;
 import softarch.portal.data.RegularAdministrator;
 import softarch.portal.data.UserProfile;
-import softarch.portal.db.Database;
+import softarch.portal.db.json.Database;
 import softarch.portal.db.DatabaseException;
 
 import java.sql.Connection;
@@ -33,10 +33,8 @@ public class UserDatabase extends Database {
 	/**
 	 * Inserts a new user profile into the user database.
 	 */
-	public void insert(UserProfile profile)
-		throws DatabaseException {
-		
-		executeSql(profile.asSql());
+	public void insert(UserProfile profile) throws DatabaseException {
+		insertJson(profile.asJSON());
 	}
 
 }

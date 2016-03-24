@@ -92,6 +92,7 @@ public class CheapSubscription extends RegularUser {
 	        "\"lastLogin\":"  + "\"" + lastLogin + "\"" +
 	        "}";
 	}
+	
 	/**
 	 * Returns an SQL INSERT string that allows the system to add
 	 * the account to a relational database.
