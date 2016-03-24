@@ -11,13 +11,13 @@ import java.util.Iterator;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 
 /**
  * This abstract class implements the behaviour that is to be shared
  * by all databases.
- * @author Niels Joncheere
+ * @author 
  */
 public class Database {
 	
