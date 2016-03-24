@@ -78,6 +78,8 @@ public class ExpertAdministrator extends Administrator {
 			normalizeSql(emailAddress) + "\', \'" +
 			df.format(lastLogin) + "\');";
 	}
+	
+	public String asJSON() { return ""; } //Out of scope of Assignment Just for avoid error: Expected implementation by UserProfile
 
 	/**
 	 * Returns an SQL UPDATE string that allows the system to update

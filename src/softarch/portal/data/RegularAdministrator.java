@@ -62,6 +62,8 @@ public class RegularAdministrator extends Administrator {
 			"<lastLogin>" + df.format(lastLogin) + "</lastLogin>" +
 			"</RegularAdministrator>";
 	}
+	
+	public String asJSON() { return ""; } //Out of scope of Assignment Just for avoid error: Expected implementation by UserProfile
 
 	/**
 	 * Returns an SQL INSERT string that allows the system to add
