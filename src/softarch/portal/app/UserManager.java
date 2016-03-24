@@ -5,6 +5,7 @@ import java.util.Map;
 import softarch.portal.data.UserProfile;
 import softarch.portal.db.DatabaseException;
 import softarch.portal.db.DatabaseFacade;
+import softarch.portal.db.json.UserDatabase;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -41,6 +42,8 @@ public class UserManager extends Manager {
 		return oldSessionId;
 	}
 
+	UserDatabase userdb;  //################ TEST ############
+	
 	/**
 	 * Creates a new user manager.
 	 * @param dbFacade	The database facade the manager should
@@ -52,6 +55,8 @@ public class UserManager extends Manager {
 		// Initialize the class' members:
 		this.users	= new Hashtable();
 		this.sessionId	= new Integer(0);
+		
+		userdb = new UserDatabase(); //################ TEST ############
 	}
 
 	/**
@@ -69,6 +74,8 @@ public class UserManager extends Manager {
 					"is already taken!");
 			else
 				dbFacade.insert(profile);
+				userdb.insert(profile);  //################ TEST ############
+				
 		}
 		catch (DatabaseException e) {
 			throw new ApplicationException(e.getMessage());

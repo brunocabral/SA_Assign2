@@ -14,6 +14,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import org.json.simple.JSONObject;
 
+import sun.org.mozilla.javascript.internal.json.JsonParser;
+
 
 /**
  * This abstract class implements the behaviour that is to be shared
@@ -28,7 +30,7 @@ public class Database {
 	 * Note that no result will be returned.
 	 */
 	public void insertJson(String data){
-		
+
 		//true = append file
 		FileWriter fileWritter;
 		try {
