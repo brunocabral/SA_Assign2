@@ -34,12 +34,16 @@ public class UserDatabase extends Database {
 	protected File cheapUserDb;
 	protected File freeUserDb;
 	protected File expensiveUserDb;
-
+	
+	protected final String FREE_SUBSCRIPTION_FILE = "freeuser.json"; 
+	protected final String CHEAP_SUBSCRIPTION_FILE = "cheapuser.json";
+	protected final String EXP_SUBSCRIPTION_FILE = "expensiveuser.json";
+	
 	public UserDatabase(){
 		try{
-			cheapUserDb = new File("cheapuser.json");  // ########## 	FIX LOCATION
-			freeUserDb = new File("freeuser.json");     // ########## 	FIX LOCATION
-			expensiveUserDb = new File("expensiveuser.json");   // ########## 	FIX LOCATION
+			cheapUserDb = new File(CHEAP_SUBSCRIPTION_FILE);  // ########## 	FIX LOCATION
+			freeUserDb = new File(FREE_SUBSCRIPTION_FILE);     // ########## 	FIX LOCATION
+			expensiveUserDb = new File(EXP_SUBSCRIPTION_FILE);   // ########## 	FIX LOCATION
 		
 			if(!cheapUserDb.exists()){
 				cheapUserDb.createNewFile();
@@ -58,20 +62,12 @@ public class UserDatabase extends Database {
 	}
 
 	/**
-	 * Inserts a new user profile into the user database.
+	 * Inserts a new user profile into the user json file
+	 * (one file for each type of subscription).
 	 */
 	public void insert(UserProfile profile) throws DatabaseException {
-		String fileName = "";
 		
-		if(profile instanceof FreeSubscription){
-			fileName = "freeuser.json";
-
-		}else if(profile instanceof CheapSubscription){
-			fileName = "cheapuser.json";
-
-		}else if(profile instanceof ExpensiveSubscription){
-			fileName = "expensiveuser.json";
-		}
+		String fileName = getSubscriptionFileName(profile); //get the name of json file 
 		
 		UserProfile[] users;
 		users = getUsersFromFile(fileName, profile.getClass());
@@ -121,6 +117,12 @@ public class UserDatabase extends Database {
 
 	}
 
+	/*
+	 * Return a array of UserProfile from a specific user subscription
+	 * @param fileName	name of the json file
+	 * @param subscription class of user subscription - it will be user for give the correct
+	 * parameter for the fromJson() method, that will parse from text json to an array of objects
+	 */
 	public UserProfile[] getUsersFromFile(String fileName, Class subscription){
 		UserProfile[] users = null;
 		BufferedReader reader;
@@ -152,10 +154,17 @@ public class UserDatabase extends Database {
 	}
 	
 	
+	public void update(UserProfile profile){
+		
+		String fileName = getSubscriptionFileName(profile);
+		
+		
+	}
+	
 	public UserProfile findUser(String username){
 
 		UserProfile[] usersArray;
-		usersArray = getUsersFromFile("freeuser.json",FreeSubscription.class);
+		usersArray = getUsersFromFile(FREE_SUBSCRIPTION_FILE,FreeSubscription.class);
 		if (usersArray != null){ //null = empty file
 			for (int i = 0; i <= usersArray.length; i++){
 				if ( usersArray[i].getUsername().equals(username)){
@@ -164,7 +173,7 @@ public class UserDatabase extends Database {
 			}
 		}
 
-		usersArray = getUsersFromFile("cheapuser.json",CheapSubscription.class);
+		usersArray = getUsersFromFile(CHEAP_SUBSCRIPTION_FILE,CheapSubscription.class);
 		if (usersArray != null){
 			for (int i = 0; i <= usersArray.length; i++){
 				if ( usersArray[i].getUsername().equals(username)){
@@ -173,7 +182,7 @@ public class UserDatabase extends Database {
 			}
 		}
 
-		usersArray = getUsersFromFile("expensiveuser.json",ExpensiveSubscription.class);
+		usersArray = getUsersFromFile(EXP_SUBSCRIPTION_FILE,ExpensiveSubscription.class);
 		if (usersArray != null){
 			for (int i = 0; i <= usersArray.length; i++){
 				if ( usersArray[i].getUsername().equals(username)){
@@ -188,7 +197,7 @@ public class UserDatabase extends Database {
 	public boolean userExists(String username){
 
 		UserProfile[] usersArray;
-		usersArray = getUsersFromFile("freeuser.json",FreeSubscription.class);
+		usersArray = getUsersFromFile(FREE_SUBSCRIPTION_FILE,FreeSubscription.class);
 		if (usersArray != null){
 			for (int i = 0; i <= usersArray.length; i++){
 				if ( usersArray[i].getUsername().equals(username)){
@@ -197,7 +206,7 @@ public class UserDatabase extends Database {
 			}
 		}
 
-		usersArray = getUsersFromFile("cheapuser.json",CheapSubscription.class);
+		usersArray = getUsersFromFile(CHEAP_SUBSCRIPTION_FILE,CheapSubscription.class);
 		if (usersArray != null){
 			for (int i = 0; i <= usersArray.length; i++){
 				if ( usersArray[i].getUsername().equals(username)){
@@ -206,7 +215,7 @@ public class UserDatabase extends Database {
 			}
 		}
 
-		usersArray = getUsersFromFile("expensiveuser.json",ExpensiveSubscription.class);
+		usersArray = getUsersFromFile(EXP_SUBSCRIPTION_FILE,ExpensiveSubscription.class);
 		if (usersArray != null){
 			for (int i = 0; i <= usersArray.length; i++){
 				if ( usersArray[i].getUsername().equals(username)){
@@ -216,6 +225,27 @@ public class UserDatabase extends Database {
 		}
 		
 		return false; 
+	}
+	
+	/**
+	 * Check what is the respective json file for each type of subscription
+	 * @param profile 
+	 * @return String - Name of the file
+	 */
+	private String getSubscriptionFileName(UserProfile profile){
+		String fileName = "";
+		
+		if(profile instanceof FreeSubscription){
+			fileName = "freeuser.json";
+
+		}else if(profile instanceof CheapSubscription){
+			fileName = "cheapuser.json";
+
+		}else if(profile instanceof ExpensiveSubscription){
+			fileName = "expensiveuser.json";
+		}
+		
+		return fileName;
 	}
 
 
