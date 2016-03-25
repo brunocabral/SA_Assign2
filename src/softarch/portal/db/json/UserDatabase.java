@@ -156,7 +156,7 @@ public class UserDatabase extends Database {
 
 		UserProfile[] usersArray;
 		usersArray = getUsersFromFile("freeuser.json",FreeSubscription.class);
-		if (usersArray != null){
+		if (usersArray != null){ //null = empty file
 			for (int i = 0; i <= usersArray.length; i++){
 				if ( usersArray[i].getUsername().equals(username)){
 					return usersArray[i];
@@ -183,7 +183,39 @@ public class UserDatabase extends Database {
 		}
 		
 		return null; //if there is no user with this username
+	}
+	
+	public boolean userExists(String username){
 
+		UserProfile[] usersArray;
+		usersArray = getUsersFromFile("freeuser.json",FreeSubscription.class);
+		if (usersArray != null){
+			for (int i = 0; i <= usersArray.length; i++){
+				if ( usersArray[i].getUsername().equals(username)){
+					return true;
+				}
+			}
+		}
+
+		usersArray = getUsersFromFile("cheapuser.json",CheapSubscription.class);
+		if (usersArray != null){
+			for (int i = 0; i <= usersArray.length; i++){
+				if ( usersArray[i].getUsername().equals(username)){
+					return true;
+				}
+			}
+		}
+
+		usersArray = getUsersFromFile("expensiveuser.json",ExpensiveSubscription.class);
+		if (usersArray != null){
+			for (int i = 0; i <= usersArray.length; i++){
+				if ( usersArray[i].getUsername().equals(username)){
+					return true;
+				}
+			}
+		}
+		
+		return false; 
 	}
 
 
