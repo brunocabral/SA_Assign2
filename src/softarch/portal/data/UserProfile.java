@@ -31,7 +31,6 @@ public abstract class UserProfile extends Data {
 	 * the account in a relational database.
 	 */
 	public abstract String asSqlUpdate();
-
 	
 	public String getUsername() {
 		return username;

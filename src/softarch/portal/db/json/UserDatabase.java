@@ -149,7 +149,42 @@ public class UserDatabase extends Database {
 		}
 		
 		return users;
-	
 	}
+	
+	
+	public UserProfile findUser(String username){
+
+		UserProfile[] usersArray;
+		usersArray = getUsersFromFile("freeuser.json",FreeSubscription.class);
+		if (usersArray != null){
+			for (int i = 0; i <= usersArray.length; i++){
+				if ( usersArray[i].getUsername().equals(username)){
+					return usersArray[i];
+				}
+			}
+		}
+
+		usersArray = getUsersFromFile("cheapuser.json",CheapSubscription.class);
+		if (usersArray != null){
+			for (int i = 0; i <= usersArray.length; i++){
+				if ( usersArray[i].getUsername().equals(username)){
+					return usersArray[i];
+				}
+			}
+		}
+
+		usersArray = getUsersFromFile("expensiveuser.json",ExpensiveSubscription.class);
+		if (usersArray != null){
+			for (int i = 0; i <= usersArray.length; i++){
+				if ( usersArray[i].getUsername().equals(username)){
+					return usersArray[i];
+				}
+			}
+		}
+		
+		return null; //if there is no user with this username
+
+	}
+
 
 }
