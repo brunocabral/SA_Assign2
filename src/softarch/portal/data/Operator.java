@@ -78,8 +78,6 @@ public class Operator extends UserProfile {
 			df.format(lastLogin) + "\');";
 	}
 	
-	public String asJSON() { return ""; } //Out of scope of Assignment Just for avoid error: Expected implementation by UserProfile
-
 	/**
 	 * When an operator has logged in successfully, he will be
 	 * redirected to this page.

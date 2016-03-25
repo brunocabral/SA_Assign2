@@ -32,7 +32,6 @@ public abstract class UserProfile extends Data {
 	 */
 	public abstract String asSqlUpdate();
 
-	public abstract String asJSON();
 	
 	public String getUsername() {
 		return username;
