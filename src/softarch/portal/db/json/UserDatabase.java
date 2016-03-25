@@ -1,16 +1,16 @@
 package softarch.portal.db.json;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-import org.json.simple.JSONArray;
-import org.json.simple.*;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.google.gson.*;
 
 import softarch.portal.data.CheapSubscription;
 import softarch.portal.data.ExpensiveSubscription;
@@ -29,32 +29,26 @@ import softarch.portal.db.DatabaseException;
  * @author Bruno M. Cabral/ Luiz N Junior.
  */
 public class UserDatabase extends Database {
-	
+
 	protected File userdb;
 	protected File cheapUserDb;
 	protected File freeUserDb;
 	protected File expensiveUserDb;
-	
+
 	public UserDatabase(){
 		try{
-			cheapUserDb = new File("cheapuserdb.json");  // ########## 	FIX LOCATION
-			freeUserDb = new File("freeuserdb.json");     // ########## 	FIX LOCATION
-			expensiveUserDb = new File("expensiveuserdb.json");   // ########## 	FIX LOCATION
-//			userdb = new File("userdb.json");
-			
-			//if file doesnt exists, then create it
-//			if(!userdb.exists()){
-//				userdb.createNewFile();
-//			}
-			
+			cheapUserDb = new File("cheapuser.json");  // ########## 	FIX LOCATION
+			freeUserDb = new File("freeuser.json");     // ########## 	FIX LOCATION
+			expensiveUserDb = new File("expensiveuser.json");   // ########## 	FIX LOCATION
+		
 			if(!cheapUserDb.exists()){
 				cheapUserDb.createNewFile();
 			}
-			
+
 			if(!freeUserDb.exists()){
 				freeUserDb.createNewFile();
 			}
-			
+
 			if(!expensiveUserDb.exists()){
 				expensiveUserDb.createNewFile();
 			}
@@ -67,69 +61,95 @@ public class UserDatabase extends Database {
 	 * Inserts a new user profile into the user database.
 	 */
 	public void insert(UserProfile profile) throws DatabaseException {
+		String fileName = "";
 		
-		
-//		JSONObject userJson = profile.asJSONObject();
-//		
-//		String type = (String) userJson.get("type");
-//
-//		String dbName = "";
-//		if (type.equals("free")){
-//			dbName = "freeuserdb.json";
-//			
-//		}else if(type.equals("cheap")){
-//			dbName = "cheapuserdb.json";
-//		
-//		}else if(type.equals("expensive")){
-//			dbName = "expensiveuserdb.json";
-//		}
-//		userJson.remove("type"); //remove flag 
-//	
-//		JSONArray users = new JSONArray();
-//		
-//		if (getUsers(dbName) != null){
-//			users = getUsers(dbName);
-//		}	
-//		
-//		users.add(userJson.toString());
-//		
-//		FileWriter fileWritter;		
-//		try {
-//			fileWritter = new FileWriter(dbName); //file
-//			BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-//	        bufferWritter.write( users.toJSONString() );
-//	        bufferWritter.close();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-	}
-		
-	public JSONArray getUsers(String fileName){
+		if(profile instanceof FreeSubscription){
+			fileName = "freeuser.json";
 
-		JSONParser parser = new JSONParser();
+		}else if(profile instanceof CheapSubscription){
+			fileName = "cheapuser.json";
+
+		}else if(profile instanceof ExpensiveSubscription){
+			fileName = "expensiveuser.json";
+		}
 		
-		JSONArray users = null;
+		UserProfile[] users;
+		users = getUsersFromFile(fileName, profile.getClass());
+		
+//		System.out.println(users == null ? "yesshh1": "no1");
+//		System.out.println("Users length: " + users.length);
+		ArrayList<UserProfile> usersList;
+//		System.out.println("PASSANDO");
+		//If file is empty, creates an empty ArrayList
+		if (users == null){
+			usersList = new ArrayList<UserProfile>();
+//			System.out.println(users == null ? "yesshh2": "no2");
+		//Otherwise, converts the result from array to ArrayList	
+		}else{
+			usersList = new ArrayList<UserProfile>(Arrays.asList(users));	
+//			System.out.println("ENTROU ELSE");
+		}
+		
+			
+		//-------- PRINT TEST ----------------------------
+		
+//		for (UserProfile temp : usersList) {
+//			System.out.println("username: "+ temp.getUsername());
+//		}
+//		UserProfile fs = new FreeSubscription("novo", "caraio", "funciona", "poha", "t@t", new Date());
+		//----------------------------------------------
+		
+		usersList.add(profile);
+		Gson gson = new Gson();  
+		// ------ PRINT TEST ---------
+//		System.out.println("arraylist length: " + usersList.size());
+		// ------ ----------- ---------
+		// convert java object to JSON format,  
+		// and returned as JSON formatted string  
+		String json = gson.toJson(usersList);  
+
+		FileWriter fileWritter;		
 		try {
-			System.out.println("print1");
-			Object obj = parser.parse(new FileReader(fileName)); // ########## 	FIX LOCATION	
-			System.out.println("print2");
-			users = (JSONArray) obj;
-			System.out.println("print3");
-		
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("Parse Exception");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fileWritter = new FileWriter(fileName); //file
+			BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+	        bufferWritter.write( json );
+	        bufferWritter.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
 
-		return users;		
+	}
+
+	public UserProfile[] getUsersFromFile(String fileName, Class subscription){
+		UserProfile[] users = null;
+		BufferedReader reader;
+		try {
+			Gson gson = new GsonBuilder().create();
+			reader = new BufferedReader(new FileReader(fileName));
+			
+			if(subscription.equals(FreeSubscription.class) ){
+//				System.out.println("É FREE");
+				users = gson.fromJson(reader, FreeSubscription[].class);
+				
+			}else if(subscription.equals(CheapSubscription.class) ){
+//				System.out.println("É CHEAP");
+				users = gson.fromJson(reader, CheapSubscription[].class);
+				
+			}else if(subscription.equals(ExpensiveSubscription.class) ){
+//				System.out.println("É EXPENSIVE");
+				users = gson.fromJson(reader, ExpensiveSubscription[].class);
+			}
+			
+//			System.out.println(users == null? "yes":"no");
+//			System.out.println("Object mode: " + users[0]);
+
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+		}
+		
+		return users;
+	
 	}
 
 }
