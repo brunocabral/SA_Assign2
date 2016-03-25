@@ -29,14 +29,13 @@ public class Database {
 	 * Append the given json data.
 	 * Note that no result will be returned.
 	 */
-	public void insertJson(String data){
+	public void insertJson(String json, String dbName){
 
-		//true = append file
-		FileWriter fileWritter;
+		FileWriter fileWritter;		
 		try {
-			fileWritter = new FileWriter("userdb.json",true);
+			fileWritter = new FileWriter(dbName); //file
 			BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-	        bufferWritter.write(data);
+	        bufferWritter.write( json );
 	        bufferWritter.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
