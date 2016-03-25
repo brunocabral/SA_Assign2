@@ -78,20 +78,6 @@ public class CheapSubscription extends RegularUser {
 			"</CheapSubscription>";
 	}
 
-	/**
-	 * Returns an JSON representation of the object.
-	 */
-	public String asJSON() {	
-		return 
-		    "{" + 
-		    "\"CheapSubscription\": {" +
-	        "\"username\":"   + "\"" + username  + "\"," +
-	        "\"firstName\":"  + "\"" + firstName  + "\"," +
-	        "\"lastName\":"   + "\"" + lastName  + "\"," +
-	        "\"emailAddress\":"  + "\"" + emailAddress  + "\"," +
-	        "\"lastLogin\":"  + "\"" + lastLogin + "\"" +
-	        "}";
-	}
 	
 	/**
 	 * Returns an SQL INSERT string that allows the system to add

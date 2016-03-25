@@ -79,21 +79,6 @@ public class FreeSubscription extends RegularUser {
 	}
 
 	/**
-	 * Returns an JSON representation of the object.
-	 */
-	public String asJSON() {	
-		return 
-		    "{" + 
-		    "\"FreeSubscription\": {" +
-	        "\"username\":"   + "\"" + username  + "\"," +
-	        "\"firstName\":"  + "\"" + firstName  + "\"," +
-	        "\"lastName\":"   + "\"" + lastName  + "\"," +
-	        "\"emailAddress\":"  + "\"" + emailAddress  + "\"," +
-	        "\"lastLogin\":"  + "\"" + lastLogin + "\"" +
-	        "}";
-	}
-	
-	/**
 	 * Returns an SQL INSERT string that allows the system to add
 	 * the account to a relational database.
 	 */

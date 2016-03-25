@@ -31,8 +31,6 @@ public abstract class UserProfile extends Data {
 	 * the account in a relational database.
 	 */
 	public abstract String asSqlUpdate();
-
-	public abstract String asJSON();
 	
 	public String getUsername() {
 		return username;
@@ -49,5 +47,29 @@ public abstract class UserProfile extends Data {
 	public UserProfile setLastLogin(Date lastLogin) {
 		this.lastLogin = lastLogin;
 		return this;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmailAddress() {
+		return emailAddress;
+	}
+
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
 	}
 }

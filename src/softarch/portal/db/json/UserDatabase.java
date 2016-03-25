@@ -1,7 +1,16 @@
 package softarch.portal.db.json;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import com.google.gson.*;
 
 import softarch.portal.data.CheapSubscription;
 import softarch.portal.data.ExpensiveSubscription;
@@ -20,16 +29,28 @@ import softarch.portal.db.DatabaseException;
  * @author Bruno M. Cabral/ Luiz N Junior.
  */
 public class UserDatabase extends Database {
-	
+
 	protected File userdb;
-	
+	protected File cheapUserDb;
+	protected File freeUserDb;
+	protected File expensiveUserDb;
+
 	public UserDatabase(){
 		try{
-			userdb = new File("userdb.json");
+			cheapUserDb = new File("cheapuser.json");  // ########## 	FIX LOCATION
+			freeUserDb = new File("freeuser.json");     // ########## 	FIX LOCATION
+			expensiveUserDb = new File("expensiveuser.json");   // ########## 	FIX LOCATION
+		
+			if(!cheapUserDb.exists()){
+				cheapUserDb.createNewFile();
+			}
 
-			//if file doesnt exists, then create it
-			if(!userdb.exists()){
-				userdb.createNewFile();
+			if(!freeUserDb.exists()){
+				freeUserDb.createNewFile();
+			}
+
+			if(!expensiveUserDb.exists()){
+				expensiveUserDb.createNewFile();
 			}
 		}catch(IOException e){
 			e.printStackTrace();
@@ -40,7 +61,162 @@ public class UserDatabase extends Database {
 	 * Inserts a new user profile into the user database.
 	 */
 	public void insert(UserProfile profile) throws DatabaseException {
-		insertJson(profile.asJSON());
+		String fileName = "";
+		
+		if(profile instanceof FreeSubscription){
+			fileName = "freeuser.json";
+
+		}else if(profile instanceof CheapSubscription){
+			fileName = "cheapuser.json";
+
+		}else if(profile instanceof ExpensiveSubscription){
+			fileName = "expensiveuser.json";
+		}
+		
+		UserProfile[] users;
+		users = getUsersFromFile(fileName, profile.getClass());
+		
+//		System.out.println(users == null ? "yesshh1": "no1");
+//		System.out.println("Users length: " + users.length);
+		ArrayList<UserProfile> usersList;
+//		System.out.println("PASSANDO");
+		//If file is empty, creates an empty ArrayList
+		if (users == null){
+			usersList = new ArrayList<UserProfile>();
+//			System.out.println(users == null ? "yesshh2": "no2");
+		//Otherwise, converts the result from array to ArrayList	
+		}else{
+			usersList = new ArrayList<UserProfile>(Arrays.asList(users));	
+//			System.out.println("ENTROU ELSE");
+		}
+		
+			
+		//-------- PRINT TEST ----------------------------
+		
+//		for (UserProfile temp : usersList) {
+//			System.out.println("username: "+ temp.getUsername());
+//		}
+//		UserProfile fs = new FreeSubscription("novo", "caraio", "funciona", "poha", "t@t", new Date());
+		//----------------------------------------------
+		
+		usersList.add(profile);
+		Gson gson = new Gson();  
+		// ------ PRINT TEST ---------
+//		System.out.println("arraylist length: " + usersList.size());
+		// ------ ----------- ---------
+		// convert java object to JSON format,  
+		// and returned as JSON formatted string  
+		String json = gson.toJson(usersList);  
+
+		FileWriter fileWritter;		
+		try {
+			fileWritter = new FileWriter(fileName); //file
+			BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+	        bufferWritter.write( json );
+	        bufferWritter.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
+
+	public UserProfile[] getUsersFromFile(String fileName, Class subscription){
+		UserProfile[] users = null;
+		BufferedReader reader;
+		try {
+			Gson gson = new GsonBuilder().create();
+			reader = new BufferedReader(new FileReader(fileName));
+			
+			if(subscription.equals(FreeSubscription.class) ){
+//				System.out.println("É FREE");
+				users = gson.fromJson(reader, FreeSubscription[].class);
+				
+			}else if(subscription.equals(CheapSubscription.class) ){
+//				System.out.println("É CHEAP");
+				users = gson.fromJson(reader, CheapSubscription[].class);
+				
+			}else if(subscription.equals(ExpensiveSubscription.class) ){
+//				System.out.println("É EXPENSIVE");
+				users = gson.fromJson(reader, ExpensiveSubscription[].class);
+			}
+			
+//			System.out.println(users == null? "yes":"no");
+//			System.out.println("Object mode: " + users[0]);
+
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+		}
+		
+		return users;
+	}
+	
+	
+	public UserProfile findUser(String username){
+
+		UserProfile[] usersArray;
+		usersArray = getUsersFromFile("freeuser.json",FreeSubscription.class);
+		if (usersArray != null){ //null = empty file
+			for (int i = 0; i <= usersArray.length; i++){
+				if ( usersArray[i].getUsername().equals(username)){
+					return usersArray[i];
+				}
+			}
+		}
+
+		usersArray = getUsersFromFile("cheapuser.json",CheapSubscription.class);
+		if (usersArray != null){
+			for (int i = 0; i <= usersArray.length; i++){
+				if ( usersArray[i].getUsername().equals(username)){
+					return usersArray[i];
+				}
+			}
+		}
+
+		usersArray = getUsersFromFile("expensiveuser.json",ExpensiveSubscription.class);
+		if (usersArray != null){
+			for (int i = 0; i <= usersArray.length; i++){
+				if ( usersArray[i].getUsername().equals(username)){
+					return usersArray[i];
+				}
+			}
+		}
+		
+		return null; //if there is no user with this username
+	}
+	
+	public boolean userExists(String username){
+
+		UserProfile[] usersArray;
+		usersArray = getUsersFromFile("freeuser.json",FreeSubscription.class);
+		if (usersArray != null){
+			for (int i = 0; i <= usersArray.length; i++){
+				if ( usersArray[i].getUsername().equals(username)){
+					return true;
+				}
+			}
+		}
+
+		usersArray = getUsersFromFile("cheapuser.json",CheapSubscription.class);
+		if (usersArray != null){
+			for (int i = 0; i <= usersArray.length; i++){
+				if ( usersArray[i].getUsername().equals(username)){
+					return true;
+				}
+			}
+		}
+
+		usersArray = getUsersFromFile("expensiveuser.json",ExpensiveSubscription.class);
+		if (usersArray != null){
+			for (int i = 0; i <= usersArray.length; i++){
+				if ( usersArray[i].getUsername().equals(username)){
+					return true;
+				}
+			}
+		}
+		
+		return false; 
+	}
+
 
 }
