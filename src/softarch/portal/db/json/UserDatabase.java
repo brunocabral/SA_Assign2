@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import com.google.gson.*;
 
@@ -157,36 +158,59 @@ public class UserDatabase extends Database {
 	public void update(UserProfile profile){
 		
 		String fileName = getSubscriptionFileName(profile);
+		UserProfile[] users;
+		users= getUsersFromFile(fileName, profile.getClass());
 		
+		for (int i = 0; i <= users.length; i++){
+			if ( users[i].getUsername().equals(profile.getUsername())){
+				users[i].setLastLogin(new Date());
+				break; // exit for loop
+			}
+		}
 		
+		Gson gson = new Gson();  
+ 
+		String json = gson.toJson(users);  
+
+		FileWriter fileWritter;		
+		try {
+			fileWritter = new FileWriter(fileName); //file
+			BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+	        bufferWritter.write( json );
+	        bufferWritter.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 	
 	public UserProfile findUser(String username){
 
-		UserProfile[] usersArray;
-		usersArray = getUsersFromFile(FREE_SUBSCRIPTION_FILE,FreeSubscription.class);
-		if (usersArray != null){ //null = empty file
-			for (int i = 0; i <= usersArray.length; i++){
-				if ( usersArray[i].getUsername().equals(username)){
-					return usersArray[i];
+		UserProfile[] users;
+		users = getUsersFromFile(FREE_SUBSCRIPTION_FILE,FreeSubscription.class);
+		if (users != null){ //null = empty file
+			for (int i = 0; i <= users.length; i++){
+				if ( users[i].getUsername().equals(username)){
+					return users[i];
 				}
 			}
 		}
 
-		usersArray = getUsersFromFile(CHEAP_SUBSCRIPTION_FILE,CheapSubscription.class);
-		if (usersArray != null){
-			for (int i = 0; i <= usersArray.length; i++){
-				if ( usersArray[i].getUsername().equals(username)){
-					return usersArray[i];
+		users = getUsersFromFile(CHEAP_SUBSCRIPTION_FILE,CheapSubscription.class);
+		if (users != null){
+			for (int i = 0; i <= users.length; i++){
+				if ( users[i].getUsername().equals(username)){
+					return users[i];
 				}
 			}
 		}
 
-		usersArray = getUsersFromFile(EXP_SUBSCRIPTION_FILE,ExpensiveSubscription.class);
-		if (usersArray != null){
-			for (int i = 0; i <= usersArray.length; i++){
-				if ( usersArray[i].getUsername().equals(username)){
-					return usersArray[i];
+		users = getUsersFromFile(EXP_SUBSCRIPTION_FILE,ExpensiveSubscription.class);
+		if (users != null){
+			for (int i = 0; i <= users.length; i++){
+				if ( users[i].getUsername().equals(username)){
+					return users[i];
 				}
 			}
 		}
@@ -196,29 +220,29 @@ public class UserDatabase extends Database {
 	
 	public boolean userExists(String username){
 
-		UserProfile[] usersArray;
-		usersArray = getUsersFromFile(FREE_SUBSCRIPTION_FILE,FreeSubscription.class);
-		if (usersArray != null){
-			for (int i = 0; i <= usersArray.length; i++){
-				if ( usersArray[i].getUsername().equals(username)){
+		UserProfile[] users;
+		users = getUsersFromFile(FREE_SUBSCRIPTION_FILE,FreeSubscription.class);
+		if (users != null){
+			for (int i = 0; i <= users.length; i++){
+				if ( users[i].getUsername().equals(username)){
 					return true;
 				}
 			}
 		}
 
-		usersArray = getUsersFromFile(CHEAP_SUBSCRIPTION_FILE,CheapSubscription.class);
-		if (usersArray != null){
-			for (int i = 0; i <= usersArray.length; i++){
-				if ( usersArray[i].getUsername().equals(username)){
+		users = getUsersFromFile(CHEAP_SUBSCRIPTION_FILE,CheapSubscription.class);
+		if (users != null){
+			for (int i = 0; i <= users.length; i++){
+				if ( users[i].getUsername().equals(username)){
 					return true;
 				}
 			}
 		}
 
-		usersArray = getUsersFromFile(EXP_SUBSCRIPTION_FILE,ExpensiveSubscription.class);
-		if (usersArray != null){
-			for (int i = 0; i <= usersArray.length; i++){
-				if ( usersArray[i].getUsername().equals(username)){
+		users = getUsersFromFile(EXP_SUBSCRIPTION_FILE,ExpensiveSubscription.class);
+		if (users != null){
+			for (int i = 0; i <= users.length; i++){
+				if ( users[i].getUsername().equals(username)){
 					return true;
 				}
 			}
@@ -236,13 +260,13 @@ public class UserDatabase extends Database {
 		String fileName = "";
 		
 		if(profile instanceof FreeSubscription){
-			fileName = "freeuser.json";
+			fileName = FREE_SUBSCRIPTION_FILE;
 
 		}else if(profile instanceof CheapSubscription){
-			fileName = "cheapuser.json";
+			fileName = CHEAP_SUBSCRIPTION_FILE;
 
 		}else if(profile instanceof ExpensiveSubscription){
-			fileName = "expensiveuser.json";
+			fileName = EXP_SUBSCRIPTION_FILE;
 		}
 		
 		return fileName;
